@@ -1,0 +1,4 @@
+bin/*
+etc/*
+src/build/lms
+*.o
