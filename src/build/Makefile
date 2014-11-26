@@ -1,6 +1,10 @@
-lms-build: main.o lms.o modules.o
+include ../rules.make
+include ../opts.make
+include ../files.make
+
+lms-build: $(LMS_OBJECTS)
 	@echo "LD     lms"
 	@$(CC) $^ -o lms
 
 clean:
-	rm -f *.o lms
+	@rm -f $(LMS_OBJECTS) lms

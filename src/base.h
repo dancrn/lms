@@ -6,6 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#define LMS_MODULE_PATH "/Users/dan/Projects/lms/etc/lms"
+
 typedef struct _module_t
 {
   char    *name;

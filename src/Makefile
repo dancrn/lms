@@ -1,7 +1,8 @@
 include rules.make
 include opts.make
+include files.make
 
-lms-build: main.o lms.o modules.o
+lms-build: $(LMS_OBJECTS)
 	@cp $^ build/
 	@make -C build lms-build
 

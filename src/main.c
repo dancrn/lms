@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lms.h"
+#include "modules.h"
 
 int 
 main
@@ -9,6 +10,7 @@ main
   {
     fprintf(stderr, "Error: No action specified\n");
     lms_help();
+
     return 1;
   }
 

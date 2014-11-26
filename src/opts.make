@@ -1,1 +1,1 @@
-CFLAGS=-std=c99 -O2 -Wall -Wpedantic
+CFLAGS=-std=c99 -O0 -g -Wall -Wpedantic
