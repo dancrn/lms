@@ -1,0 +1,16 @@
+#!/bin/sh
+
+module ()
+{
+  #run lms with args
+  lms $@
+
+  #if it completed successfully, source the script it made (if any)
+  if [ $? -eq 0 ]; then
+    target_file="/tmp/.lms$$.sh"
+    if [ -f $target_file ]; then
+      source "$target_file"
+      rm -f "$target_file"
+    fi
+  fi
+}
