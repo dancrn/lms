@@ -1,4 +1,4 @@
-bin/*
+bin/lms
 etc/*
 src/build/lms
 *.o
