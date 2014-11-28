@@ -171,6 +171,21 @@ modules_find_provides
   return result;
 }
 
+int 
+module_compare_str
+(module_t a, char *b)
+{
+  size_t slen = strlen(a.category) + 
+    strlen(a.name) + 
+    strlen(a.version);
+
+  char buf[slen+4]; memset(buf, 0, slen+4);
+  
+  snprintf(buf, slen+3, "%s/%s/%s", a.category, a.name, a.version);
+
+  return strcmp(buf, b);
+}
+
 void
 modules_free
 (module_t *modules, size_t num_modules)

@@ -17,6 +17,18 @@ module_t
 module_read
 (const char *path, int *ret);
 
+int
+module_compare
+(module_t a, module_t b);
+
+int 
+module_compare_str
+(module_t a, char *b);
+
+void
+modules_free
+(module_t *modules, size_t num_modules);
+
 char *
 lms_strdup
 (const char *str);
