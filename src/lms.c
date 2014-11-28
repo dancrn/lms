@@ -116,8 +116,8 @@ lms_module_load
 
   if (0 == num_modules)
   {
-    printf("No modules available. Check configuration\n");
-    printf("Modules path is: %s\n", _lms_module_path);
+    fprintf(stderr, "No modules available. Check configuration.\n");
+    fprintf(stderr, "Modules path is: %s\n", _lms_module_path);
 
     return 1;
   }
@@ -214,7 +214,6 @@ lms_module_unload
       }
     }
 
-    //unload
     if (NULL == target)
       continue;
 
@@ -222,6 +221,7 @@ lms_module_unload
     ue_del_module(target_mod);
   }
 
+  //generate the script which our calling bash function will call
   ue_gen_script();
 
   for (size_t i=0; i<num_loaded; i++)
