@@ -2,6 +2,8 @@
 #include "util.h"
 
 #include <unistd.h>
+#include <sys/types.h>
+#include <stdlib.h>
 
 char **
 ue_get_loaded
@@ -75,14 +77,14 @@ ue_append_env
 {
   char *old_env = lms_strdup(getenv(env_var));
   size_t new_len = 
-    ((old_env) ? strlen(old_env) : 0) +
+    strlen(old_env) +
     strlen(prefix)  +
     strlen(postfix);
 
   char buf[new_len+3]; memset(buf, 0, new_len+3);
 
-  if (((old_env) ? strlen(old_env) : 0))
-    snprintf(buf, new_len+2, "%s%s:%s", old_env, prefix, postfix);
+  if (strlen(old_env))
+    snprintf(buf, new_len+2, "%s%s:%s", prefix, postfix, old_env);
   else
     snprintf(buf, new_len+2, "%s%s", prefix, postfix);
 
@@ -125,6 +127,7 @@ ue_remove_env
   }
 
   setenv(env_var, old_env, 1);
+  free(old_env);
 }
 
 void
@@ -140,7 +143,7 @@ ue_gen_script
   FILE *fp = fopen(buf, "w");
   if (NULL == fp)
   {
-    fprintf(stderr, "Fatal: Unable to open temporary file\n");
+    fprintf(stderr, "lms-fatal: unable to open temporary file\n");
     return;
   }
 

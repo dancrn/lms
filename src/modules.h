@@ -23,7 +23,7 @@ module_read
 
 int
 module_compare
-(module_t a, module_t b);
+(const void *a, const void *b);
 
 int 
 module_compare_str
