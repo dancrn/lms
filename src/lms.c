@@ -103,8 +103,7 @@ lms_list_which
     free(list);
   }
 
-  //no point in freeing modules, as we will exit
-  //modules_free(modules);
+  modules_free(modules, num_modules);
   return 0;
 }
 
@@ -124,7 +123,7 @@ lms_module_load
   }
 
   size_t num_loaded = 0;
-  char   **loaded     = ue_get_loaded(&num_loaded);
+  char   **loaded   = ue_get_loaded(&num_loaded);
 
   for (size_t i=0; i<num_names; i++)
   {
@@ -184,13 +183,52 @@ lms_module_load
 
 int
 lms_module_unload
-(size_t num_modules, char **modules)
+(size_t num_unloads, char **unloads)
 {
   //get loaded modules
+  size_t num_loaded  = 0;
+  char   **loaded    = ue_get_loaded(&num_loaded);
 
-  //check if module is loaded
+  size_t num_modules = 0;
+  module_t *modules  = modules_read(_lms_module_path, &num_modules);
 
-  //unload
+  for (size_t i=0; i<num_unloads; i++)
+  {
+    char *target = NULL;
+    for (size_t j=0; j<num_loaded; j++)
+    {
+      if (strstr(loaded[j], unloads[i]))
+      {
+        if (target)
+        {
+          fprintf(stderr, 
+            "Warning: \"%s\" is an ambigious identifier\n", 
+            unloads[i]
+          );
+
+          target = NULL;
+          break;
+        }
+
+        target = loaded[j];
+      }
+    }
+
+    //unload
+    if (NULL == target)
+      continue;
+
+    module_t target_mod = module_find(modules, num_modules, target);
+    ue_del_module(target_mod);
+  }
+
+  ue_gen_script();
+
+  for (size_t i=0; i<num_loaded; i++)
+    free(loaded[i]);
+
+  free(loaded);
+  modules_free(modules, num_modules);
 
   return 0;
 }

@@ -5,6 +5,10 @@ module_t *
 modules_find_provides
 (const char *name, module_t *modules, size_t num_modules, size_t *num_found);
 
+module_t
+module_find
+(module_t *modules, size_t num_modules, char *ident);
+
 module_t *
 modules_read
 (const char *path, size_t *num_read);

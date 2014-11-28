@@ -186,6 +186,23 @@ module_compare_str
   return strcmp(buf, b);
 }
 
+module_t
+module_find
+(module_t *modules, size_t num_modules, char *ident)
+{
+  for (size_t i=0; i<num_modules; i++)
+    if (!module_compare_str(modules[i], ident))
+      return modules[i];
+
+  fprintf(stderr, 
+    "lms-fatal: could not find module with identifier \"%s\"\n", 
+    ident
+  );
+  exit(1);
+
+  return (module_t) {0};
+}
+
 void
 modules_free
 (module_t *modules, size_t num_modules)

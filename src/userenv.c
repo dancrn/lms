@@ -121,7 +121,7 @@ ue_remove_env
     //shift the remainder up the string
     size_t plen = strlen(&env_rm[len]);
     memmove(env_rm, &env_rm[len], plen);
-    env_rm[len+plen] = '\0';
+    env_rm[plen] = '\0';
   }
 
   setenv(env_var, old_env, 1);
