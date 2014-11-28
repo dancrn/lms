@@ -82,7 +82,7 @@ ue_append_env
   char buf[new_len+3]; memset(buf, 0, new_len+3);
 
   if (((old_env) ? strlen(old_env) : 0))
-    snprintf(buf, new_len+2, "%s:%s%s", old_env, prefix, postfix);
+    snprintf(buf, new_len+2, "%s%s:%s", old_env, prefix, postfix);
   else
     snprintf(buf, new_len+2, "%s%s", prefix, postfix);
 
