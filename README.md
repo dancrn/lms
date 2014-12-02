@@ -46,10 +46,18 @@ a module is simply a JSON string in a file ending with `.json`. this is an examp
 
     {
       "name"      : "gcc",
-      "version"   : "4.9.1",
+      "version"   : "4.8.2",
       "category"  : "languages",
-      "prefix"    : "/srv/modules/gcc/4.9.1",
-      "provides"  : [ "gcc", "c++", "cpp", "g++", "gfortran" ]
+      "prefix"    : "/srv/modules/gcc/4.8.2",
+      "provides"  : [ "gcc", "c++", "cpp", "g++", "gfortran" ],
+      "exports"   : 
+      [
+        { "platform_path" : "/bin" },
+        { "platform_libs" : "/lib" },
+        { "platform_libs" : "/lib64" },
+        { "platform_incl" : "/include" },
+        { "platform_docs" : "/share/man" },
+      ]
     }
 
 multiple modules in a module file is currently not supported.
