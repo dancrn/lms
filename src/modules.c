@@ -105,8 +105,9 @@ module_read
     NULL == jsn_exports
   )
   {
-    *ret = 7;
     json_value_free(jsn_mod);
+    return (*ret = 7), (module_t) {0};
+
   }
 
   //provides is a list of binaries or features a module gives
@@ -118,7 +119,7 @@ module_read
     if (json_string != val->type)
     {
       module_free(result); json_value_free(jsn_mod);
-      return (*ret = 8), result = (module_t) {0};
+      return (*ret = 8), (module_t) {0};
     }
 
     result.provides[i] = lms_strdup(val->u.string.ptr);
@@ -138,7 +139,7 @@ module_read
     )
     {
       module_free(result); json_value_free(jsn_mod);
-      return (*ret = 8), result = (module_t) {0};
+      return (*ret = 9), result = (module_t) {0};
     }
 
     result.export_env[i]  = lms_strdup(val->u.object.values[0].name);
