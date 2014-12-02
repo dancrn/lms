@@ -25,6 +25,8 @@ modules_read
   *num_read        = _ftw_num_read;
   module_t *result = _ftw_module;
 
+  qsort(result, _ftw_num_read, sizeof(module_t), module_compare);
+
   _ftw_num_read    = 0;
   _ftw_module      = NULL;
   
@@ -35,10 +37,11 @@ int
 ftw_callback
 (const char *path, const struct stat * finfo, int flag)
 {
-  //only want to open json files
+  //only want to open files
   if (FTW_F != flag)
     return 0;
 
+  //and json files
   if (!file_is_json(path))
     return 0;
 
@@ -47,7 +50,7 @@ ftw_callback
   module_t module = module_read(path, &ret);
   if (ret)
   {
-    fprintf(stderr, "lms: warning: %s bad module (%d)\n", path, ret);
+    fprintf(stderr, "lms-warning: %s bad module (%d)\n", path, ret);
     return 0;
   }
 
@@ -184,6 +187,23 @@ module_compare_str
   snprintf(buf, slen+3, "%s/%s/%s", a.category, a.name, a.version);
 
   return strcmp(buf, b);
+}
+
+int
+module_compare
+(const void *a, const void *b)
+{
+  const module_t *am = a, *bm = b;
+  const int c1 = strcmp(am->category, bm->category);
+  if (c1)
+    return c1;
+
+  const int c2 = strcmp(am->name, bm->name);
+  if (c2)
+    return c2;
+
+  //swap so that versions are descending
+  return strcmp(bm->version, am->version);
 }
 
 module_t

@@ -5,12 +5,12 @@ lms_strdup
 (const char *str)
 {
   if (NULL == str)
-    return strdup("");
+    return lms_strdup("");
 
   size_t len = strlen(str);
   char *result = calloc(sizeof(char), len+1);
   if (NULL == result)
-    fprintf(stderr, "lms: fatal: calloc failed\n"), exit(255);
+    fprintf(stderr, "lms-fatal: calloc failed\n"), exit(255);
 
   memcpy(result, str, len);
 
@@ -25,12 +25,10 @@ lms_readfile
   if (NULL == fp)
     return NULL;
 
-  //read entire file into string
   fseek(fp, 0, SEEK_END);
   const size_t len = ftell(fp);
   fseek(fp, 0, SEEK_SET);
 
-  //check for overflow
   if (SIZE_MAX == len)
     return NULL;
 

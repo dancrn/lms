@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define LMS_MODULE_PATH "/etc/lms-modules"
+#define LMS_MODULE_PATH "/modules/conf"
 
 typedef struct _module_t
 {
