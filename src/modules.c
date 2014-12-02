@@ -93,6 +93,7 @@ module_read
   json_value *jsn_category  = json_find(jsn_mod, "category", json_string);
   json_value *jsn_prefix    = json_find(jsn_mod, "prefix",   json_string);
   json_value *jsn_provides  = json_find(jsn_mod, "provides", json_array);
+  json_value *jsn_exports   = json_find(jsn_mod, "exports",  json_array);
 
   //ensure our values have correct type
   if (
@@ -100,34 +101,51 @@ module_read
     NULL == jsn_version  ||
     NULL == jsn_category ||
     NULL == jsn_prefix   ||
-    NULL == jsn_provides
+    NULL == jsn_provides ||
+    NULL == jsn_exports
   )
   {
     *ret = 7;
     json_value_free(jsn_mod);
   }
 
-  //read module data
+  //provides is a list of binaries or features a module gives
   result.num_provides = jsn_provides->u.array.length;
   result.provides = calloc(sizeof(char *), result.num_provides);
-
   for (size_t i=0; i<result.num_provides; i++)
   {
     json_value *val = jsn_provides->u.array.values[i];
     if (json_string != val->type)
     {
-      for (size_t j=i; j>0; j--)
-        free(result.provides[j-1]);
-
-      free(result.provides);
-      json_value_free(jsn_mod);
-      *ret = 8;
-      return result = (module_t) {0};
+      module_free(result); json_value_free(jsn_mod);
+      return (*ret = 8), result = (module_t) {0};
     }
 
     result.provides[i] = lms_strdup(val->u.string.ptr);
   }
 
+  //exports is a list of things that need to be exported
+  result.num_exports = jsn_exports->u.array.length;
+  result.export_env  = calloc(sizeof(char*), result.num_exports);
+  result.export_post = calloc(sizeof(char*), result.num_exports);
+  for (size_t i=0; i<result.num_exports; i++)
+  {
+    json_value *val = jsn_exports->u.array.values[i];
+    if (
+      json_object != val->type                            &&
+      1           == val->u.object.length                 &&
+      json_string == val->u.object.values[0].value->type
+    )
+    {
+      module_free(result); json_value_free(jsn_mod);
+      return (*ret = 8), result = (module_t) {0};
+    }
+
+    result.export_env[i]  = lms_strdup(val->u.object.values[0].name);
+    result.export_post[i] = lms_strdup(val->u.object.values[0].value->u.string.ptr);
+  }
+
+  //finally some metadata.
   result.name     = lms_strdup(jsn_name->u.string.ptr);
   result.version  = lms_strdup(jsn_version->u.string.ptr);
   result.category = lms_strdup(jsn_category->u.string.ptr);
@@ -234,18 +252,29 @@ modules_free
     return;
 
   for (size_t i=0; i<num_modules; i++)
-  {
-    for (size_t j=0; j<modules[i].num_provides; j++)
-      free(modules[i].provides[j]);
-    
-    free(modules[i].provides);
-    free(modules[i].name);
-    free(modules[i].version);
-    free(modules[i].category);
-    free(modules[i].prefix);
-  }
+    module_free(modules[i]);
 
   free(modules);
+}
+
+void
+module_free
+(module_t module)
+{
+  for (size_t i=0; i<module.num_provides; i++)
+    free(module.provides[i]);
+
+  for (size_t i=0; i<module.num_exports; i++)
+  {
+    free(module.export_env[i]);
+    free(module.export_post[i]);
+  }
+  
+  free(module.provides);
+  free(module.name);
+  free(module.version);
+  free(module.category);
+  free(module.prefix);
 }
 
 bool

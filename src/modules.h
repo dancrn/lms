@@ -33,6 +33,10 @@ void
 modules_free
 (module_t *modules, size_t num_modules);
 
+void
+module_free
+(module_t module);
+
 char *
 lms_strdup
 (const char *str);
