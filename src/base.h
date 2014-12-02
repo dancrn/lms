@@ -17,4 +17,8 @@ typedef struct _module_t
   
   size_t  num_provides;
   char    **provides;
+
+  size_t  num_exports;
+  char    **export_env;
+  char    **export_post;
 } module_t;
