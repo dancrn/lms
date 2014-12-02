@@ -5,7 +5,7 @@ lms: bin_dir lms-build
 	@cp src/build/lms bin/lms
 
 lms-build:
-	@make -C src lms-build
+	@make -s -C src lms-build
 
 bin_dir:
 	@mkdir -p bin 
@@ -18,6 +18,6 @@ uninstall: /usr/local/bin/lms /usr/local/bin/lms_module_script
 	rm -f /usr/local/bin/lms /usr/local/bin/lms_module_script
 
 clean:
-	@make -C src clean
+	@make -s -C src clean
 
 .PHONY: clean
