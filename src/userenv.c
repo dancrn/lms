@@ -9,7 +9,7 @@ char **
 ue_get_loaded
 (size_t *num_loaded)
 {
-  char *env = lms_strdup(getenv("_LMS_MODS"));
+  char *env = lms_strdup(getenv(LMS_MODULES_VAR));
 
   char **result = NULL;
   size_t len    = 0;
@@ -41,13 +41,19 @@ ue_add_module
     strlen(m.version);
 
   char buf[slen+4]; memset(buf, 0, slen+4);
-  
   snprintf(buf, slen+3, "%s/%s/%s", m.category, m.name, m.version);
 
-  ue_append_env(PLATFORM_PATH,  m.prefix, "/bin");
-  ue_append_env(PLATFORM_LIBS,  m.prefix, "/lib");
-  ue_append_env(PLATFORM_INCL,  m.prefix, "/include");
-  ue_append_env("_LMS_MODS",    buf,      "");
+  ue_append_env(LMS_MODULES_VAR, "", buf);
+
+  //now append exports to env
+  for (size_t i=0; i<m.num_exports; i++)
+  {
+    char *env_var = ue_get_env_var(m, i);
+    char *postfix = m.export_post[i];
+
+    ue_append_env(env_var, m.prefix, postfix);
+    ue_add_exports(env_var);
+  }
 
   return 0;
 }
@@ -62,11 +68,14 @@ ue_del_module
 
   char buf[slen+4]; memset(buf, 0, slen+4);
   snprintf(buf, slen+3, "%s/%s/%s", m.category, m.name, m.version);
+  ue_remove_env(LMS_MODULES_VAR,    buf);
 
-  ue_remove_env(PLATFORM_PATH,  m.prefix);
-  ue_remove_env(PLATFORM_LIBS,  m.prefix);
-  ue_remove_env(PLATFORM_INCL,  m.prefix);
-  ue_remove_env("_LMS_MODS",    buf);
+  for (size_t i=0; i<m.num_exports; i++)
+  {
+    char *env_var = ue_get_env_var(m, i);
+    ue_remove_env(env_var,  m.prefix);
+    ue_add_exports(env_var);
+  }
 
   return 0;
 }
@@ -75,6 +84,10 @@ void
 ue_append_env
 (const char *env_var, const char *prefix, const char *postfix)
 {
+  //if pstfix is not a path var, then don't add the prefix   
+  if (postfix[0] != '/')
+    prefix = "";
+
   char *old_env = lms_strdup(getenv(env_var));
   size_t new_len = 
     strlen(old_env) +
@@ -89,6 +102,7 @@ ue_append_env
     snprintf(buf, new_len+2, "%s%s", prefix, postfix);
 
   setenv(env_var, buf, 1);
+  free(old_env);
 }
 
 void
@@ -147,15 +161,70 @@ ue_gen_script
     return;
   }
 
-  char *path_env = getenv(PLATFORM_PATH);
-  char *incl_env = getenv(PLATFORM_INCL);
-  char *libs_env = getenv(PLATFORM_LIBS);
-  char *mods_env = getenv("_LMS_MODS");
+  char *exports = lms_strdup(getenv(LMS_EXPORTS_VAR));
+  char *tok = strtok(exports, ":");
 
-  fprintf(fp, "export %s=%s\n", PLATFORM_PATH, path_env);
-  fprintf(fp, "export %s=%s\n", PLATFORM_INCL, incl_env);
-  fprintf(fp, "export %s=%s\n", PLATFORM_LIBS, libs_env);
-  fprintf(fp, "export %s=%s\n", "_LMS_MODS",   mods_env);
+  while (NULL != tok)
+  {
+    fprintf(fp, "export %s=%s\n",tok, getenv(tok));
+    tok = strtok(NULL, ":");
+  }
 
+  fprintf(fp, "export %s=%s\n", LMS_MODULES_VAR, getenv(LMS_MODULES_VAR));
+
+  free(exports);
   fclose(fp);
+}
+
+char *
+ue_get_env_var
+(module_t m, size_t i)
+{
+  char *env_var = m.export_env[i];
+  if (strstr(env_var, "platform"))
+  {
+    if (!strcmp(env_var, "platform_path"))
+      env_var = PLATFORM_PATH;
+    else if (!strcmp(env_var, "platform_libs"))
+      env_var = PLATFORM_LIBS;
+    else if (!strcmp(env_var, "platform_incl"))
+      env_var = PLATFORM_INCL;
+    else if (!strcmp(env_var, "platform_docs"))
+      env_var = PLATFORM_DOCS;
+  }
+
+  return env_var;
+}
+
+void
+ue_add_exports
+(const char *env_var)
+{
+  char *exports = lms_strdup(getenv(LMS_EXPORTS_VAR));
+  char *tok = strtok(exports, ":");
+
+  //if the var is already in the list, don't add
+  while (NULL != tok)
+  {
+    if (!strcmp(tok, env_var))
+    {
+      free(exports);
+      return;
+    }
+
+    tok = strtok(NULL, ":");
+  }
+
+  free(exports);
+  char *old_exports = lms_strdup(getenv(LMS_EXPORTS_VAR));
+  size_t new_len =
+    strlen(old_exports) +
+    strlen(env_var) +
+    2;
+
+  char buf[new_len+1]; memset(buf, 0, new_len+1);
+  snprintf(buf, new_len, "%s:%s", env_var, old_exports);
+
+  setenv(LMS_EXPORTS_VAR, buf, 1);
+  free(old_exports);
 }
