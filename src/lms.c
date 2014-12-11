@@ -63,6 +63,7 @@ lms_list_which
     printf("No modules available. Check configuration\n");
     printf("Modules path is: %s\n", _lms_module_path);
 
+    modules_free(modules, num_modules);
     return 1;
   }
 
@@ -74,7 +75,11 @@ lms_list_which
 
     if (0 == num_found)
     {
-      printf("\"%s\" is not provided by any module available.\n", names[i]);
+      fprintf(stderr,
+        "\"%s\" is not provided by any module available.\n", 
+        names[i]
+      );
+
       continue;
     }
 
@@ -119,6 +124,7 @@ lms_module_load
     fprintf(stderr, "No modules available. Check configuration.\n");
     fprintf(stderr, "Modules path is: %s\n", _lms_module_path);
 
+    modules_free(modules, num_modules);
     return 1;
   }
 
@@ -248,7 +254,7 @@ lms_fuzzy_search
   size_t len        = 0;
   module_t *result  = NULL;
 
-  //forgive the mild abuse of switch (this is hardly duff's device though..)
+  //forgive the mild abuse of switch (this is hardly Duff's device though..)
   for (size_t i=0; i<num_modules; i++)
   {
     module_t m = modules[i];

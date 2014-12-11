@@ -22,3 +22,10 @@ typedef struct _module_t
   char    **export_env;
   char    **export_post;
 } module_t;
+
+/*
+  TODO:
+    should probably use strtok_r just in case.
+    architecture dependent modules? (AVX, SSE, ARM?)
+    there are probably bugs. fix them.
+*/

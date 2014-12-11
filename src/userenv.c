@@ -68,7 +68,7 @@ ue_del_module
 
   char buf[slen+4]; memset(buf, 0, slen+4);
   snprintf(buf, slen+3, "%s/%s/%s", m.category, m.name, m.version);
-  ue_remove_env(LMS_MODULES_VAR,    buf);
+  ue_remove_env(LMS_MODULES_VAR, buf);
 
   for (size_t i=0; i<m.num_exports; i++)
   {
@@ -84,7 +84,7 @@ void
 ue_append_env
 (const char *env_var, const char *prefix, const char *postfix)
 {
-  //if pstfix is not a path var, then don't add the prefix   
+  //if postfix is not a path var, then don't add the prefix   
   if (postfix[0] != '/')
     prefix = "";
 
@@ -148,10 +148,10 @@ void
 ue_gen_script
 (void)
 {
+  //we use the parent's (shell's) pid, as a handle
   pid_t ppid = getppid();
   size_t len = snprintf(NULL, 0, "/tmp/.lms%d.sh", ppid);
   char buf[len+1]; memset(buf,0,len+1);
-
   snprintf(buf, len+1, "/tmp/.lms%d.sh", ppid);
 
   FILE *fp = fopen(buf, "w");

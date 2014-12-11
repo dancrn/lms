@@ -21,7 +21,7 @@ main
   else if (!strcmp(args[1], "help"))
     return lms_help(), 0;
 
-  //if we only have 2 args, we can't have any useful action
+  //at this point, if we only have 2 args, we can't have any useful action
   if (2 == num_args)
   {
     fprintf(stderr, "Error: No parameter provided for action\n");
@@ -38,6 +38,7 @@ main
 
   fprintf(stderr, "Error: Unknown action \"%s\"\n", args[1]);
   lms_help();
+
   return 1;
 }
 

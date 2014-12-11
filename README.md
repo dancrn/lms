@@ -1,6 +1,12 @@
 lms
 ===
-lite module system.
+lite module system. do you want different versions of libraries or programs? install them to a custom prefix, and create a module file for it. start using it with 
+
+    $ moule load <module name>
+
+modules are not persistent, and will only be available in your current shell. if you want to make it persistent, add to your shell's rc file.
+
+i've used (and mildly modified) James McLaughlin's json parser for C.
 
 configuration
 =============
@@ -16,7 +22,7 @@ install with
 
     # make install
 
-this will install the lms binary, along with a supporting script. you'll want to edit `/etc/profile` to source `/usr/local/bin/lms_module_script`, so that lms will work. if you call lms, then by default, nothing will happen.
+this will install the lms binary, along with a supporting script. you'll want to edit `/etc/profile` to source `/usr/local/bin/lms_module_script`, so that lms will work. if you call lms, then by default, nothing will happen (it will create the scipt that needs to be sourced, but nothing will source it)
 
 usage
 =====
@@ -64,16 +70,16 @@ a module is simply a JSON string in a file ending with `.json`. this is an examp
 
 some modules need custom exports. e.g, the python library, pyopencl, would be described by this. 
 
-{
-  "name"      : "pyopencl",
-  "version"   : "14.1",
-  "category"  : "python",
-  "prefix"    : "/modules/modules/pyopencl/2014.1",
-  "provides"  : [ "pyopencl" ],
-  "exports"   :
-  [
-    { "PYTHONPATH" : "/lib/python2.7/site-packages" },
-  ]
-}
+    {
+      "name"      : "pyopencl",
+      "version"   : "14.1",
+      "category"  : "python",
+      "prefix"    : "/modules/modules/pyopencl/2014.1",
+      "provides"  : [ "pyopencl" ],
+      "exports"   :
+      [
+        { "PYTHONPATH" : "/lib/python2.7/site-packages" },
+      ]
+    }
 
 multiple modules in a module file is currently not supported.
