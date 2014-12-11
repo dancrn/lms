@@ -48,7 +48,7 @@ a module is simply a JSON string in a file ending with `.json`. this is an examp
       "name"      : "gcc",
       "version"   : "4.8.2",
       "category"  : "languages",
-      "prefix"    : "/srv/modules/gcc/4.8.2",
+      "prefix"    : "/modules/modules/gcc/4.8.2",
       "provides"  : [ "gcc", "c++", "cpp", "g++", "gfortran" ],
       "exports"   : 
       [
@@ -59,5 +59,21 @@ a module is simply a JSON string in a file ending with `.json`. this is an examp
         { "platform_docs" : "/share/man" },
       ]
     }
+
+`platform_path`, `platform_libs`, `platform_incl` and `platform_man` are platform specific exports. use these where possible, rather than setting `LD_LIBRARY_PATH` manually. this would not work on OS X.
+
+some modules need custom exports. e.g, the python library, pyopencl, would be described by this. 
+
+{
+  "name"      : "pyopencl",
+  "version"   : "14.1",
+  "category"  : "python",
+  "prefix"    : "/modules/modules/pyopencl/2014.1",
+  "provides"  : [ "pyopencl" ],
+  "exports"   :
+  [
+    { "PYTHONPATH" : "/lib/python2.7/site-packages" },
+  ]
+}
 
 multiple modules in a module file is currently not supported.
