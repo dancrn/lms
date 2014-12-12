@@ -10,7 +10,11 @@ i've used (and mildly modified) James McLaughlin's json parser for C.
 
 configuration
 =============
-lms will by default install to `/usr/local/bin`. to set the modules path, you must edit `src/base.h`. by default, the modules path is `/etc/lms-modules`.
+lms will by default install to `/usr/local/bin`. to set the modules path, either edit `src/base.h`, or set the `LMS_MODULE_PATH` environment variable.
+
+    $ LMS_MODULE_PATH=/your/path/here make
+
+by default, the modules path is `/etc/lms-modules`.
 
 installation
 ============
@@ -54,7 +58,7 @@ a module is simply a JSON string in a file ending with `.json`. this is an examp
       "name"      : "gcc",
       "version"   : "4.8.2",
       "category"  : "languages",
-      "prefix"    : "/modules/modules/gcc/4.8.2",
+      "prefix"    : "/modules/gcc/4.8.2",
       "provides"  : [ "gcc", "c++", "cpp", "g++", "gfortran" ],
       "exports"   : 
       [
@@ -66,7 +70,7 @@ a module is simply a JSON string in a file ending with `.json`. this is an examp
       ]
     }
 
-`platform_path`, `platform_libs`, `platform_incl` and `platform_man` are platform specific exports. use these where possible, rather than setting `LD_LIBRARY_PATH` manually. this would not work on OS X.
+`platform_path`, `platform_libs`, `platform_incl` and `platform_man` are platform specific exports. use these where possible, rather than setting `LD_LIBRARY_PATH` manually - this would not work on OS X.
 
 some modules need custom exports. e.g, the python library, pyopencl, would be described by this. 
 
@@ -74,7 +78,7 @@ some modules need custom exports. e.g, the python library, pyopencl, would be de
       "name"      : "pyopencl",
       "version"   : "14.1",
       "category"  : "python",
-      "prefix"    : "/modules/modules/pyopencl/2014.1",
+      "prefix"    : "/modules/pyopencl/2014.1",
       "provides"  : [ "pyopencl" ],
       "exports"   :
       [
