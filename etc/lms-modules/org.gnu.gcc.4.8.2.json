@@ -1,0 +1,15 @@
+{
+  "name"      : "gcc",
+  "version"   : "4.8.2",
+  "category"  : "languages",
+  "prefix"    : "/modules/gcc/4.8.2",
+  "provides"  : [ "gcc", "c++", "cpp", "g++", "gfortran" ],
+  "exports"   : 
+  [
+    { "platform_path" : "/bin" },
+    { "platform_libs" : "/lib" },
+    { "platform_libs" : "/lib64" },
+    { "platform_incl" : "/include" },
+    { "platform_docs" : "/share/man" },
+  ]
+}
