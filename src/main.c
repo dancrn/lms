@@ -18,6 +18,8 @@ main
     return lms_list_available();
   else if (!strcmp(args[1], "list"))
     return lms_list_loaded();
+  else if (!strcmp(args[1], "ls"))
+    return lms_list_loaded();
   else if (!strcmp(args[1], "help"))
     return lms_help(), 0;
 
@@ -46,7 +48,7 @@ void
 lms_help
 (void)
 {
-  char *help_str = {
+  const char *help_str = {
     "Usage:\n"
     "  module [action]\n"
     "\n"
@@ -57,6 +59,8 @@ lms_help
     "  load [module]    - Loads [module] (fully qualified name is not needed)\n"
     "  unload [module]  - Removes a module (if loaded)\n"
     "\n"
+    "Aliases for list:\n"
+    "  ls\n"
     "Aliases for load:\n"
     "  add\n"
     "\n"
